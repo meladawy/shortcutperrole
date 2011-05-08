@@ -1,15 +1,15 @@
 <?php
 /**
-* Implements hook_install()
-*/
-function shortcut_per_role_install() {
-}
+ * Implements hook_install()
+ */
+function shortcut_per_role_install() { }
 /**
-* Implements hook_uninstall()
-*/
+ * Implements hook_uninstall()
+ */
 function shortcut_per_role_uninstall() {
-$role_names=db_query("SELECT name FROM {role}")->fetchCol();
-foreach ($role_names as $role_name){
-variable_del('shorcut_per_role_'. $role_name .'_set');
-}
+  $role_names = db_query("SELECT rid FROM {role}")->fetchCol();
+  foreach ($role_names as $role_name) {
+    $role_name = str_replace(' ', '_', $role_name);
+    variable_del('shorcut_per_role_' . $role_name . '_set');
+  }
 }

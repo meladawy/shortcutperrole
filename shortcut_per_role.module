@@ -17,6 +17,17 @@ function shortcut_per_role_permission() {
 }
 
 /**
+ * Implement hook_help().
+ */
+function shortcut_per_role_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#shortcut_per_role':
+      //return l(t('Settings'), 'admin/config/user-interface/shortcut-per-role');
+      break;
+  }
+}
+
+/**
  * Implements hook_menu().
  */
 function shortcut_per_role_menu() {
@@ -27,20 +38,19 @@ function shortcut_per_role_menu() {
     'page arguments' => array('shortcut_per_role_admin_form'),
     'access arguments' => array('administer shortcut per role'),
     'file' => 'shortcut_per_role.admin.inc',
-    
   );
-  
+
   return $items;
-  }
+}
 /**
-* Implements hook_shortcut_default_set()
-*/
-function shortcut_per_role_default_set($account){
-//determine the  role of user according to the rank & assign the shortcut set...
-$role_highest=db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($user->roles)) . ') ORDER BY weight DESC ') ->fetchField();
- $role_highest = str_replace(' ', '_',$role_highest);
- return variable_get('shorcut_per_role_' . $role_highest . '_set', $default='shortcut-set-1');
- }
+ * Implements hook_shortcut_default_set()
+ */
+function shortcut_per_role_default_set($account) {
+  //determine the  role of user according to the rank & assign the shortcut set...
+  $role_highest_name = db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($user->roles)) . ') ORDER BY weight DESC ')->fetchField();
+  $role_highest_name = str_replace(' ', '_', $role_highest);
+  return variable_get('shorcut_per_role_' . $role_highest_name . '_set', $default = 'shortcut-set-1');
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -49,7 +59,7 @@ $role_highest=db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', ar
  *
  * @see shortcut_per_role_form_user_admin_role_submit_alter()
  */
-function shortcut_per_role_form_user_admin_role_alter(&$form, $form_state) {
+function shortcut_per_role_form_user_admin_role_alter(&$form, &$form_state, $form_id) {
   $form['#submit'][] = 'shortcut_per_role_submit_alter';
 }
 
@@ -62,6 +72,7 @@ function shortcut_per_role_form_user_admin_role_alter(&$form, $form_state) {
  */
 function shortcut_per_role_user_admin_role_submit_alter($form, &$form_state) {
   if ($form_state['values']['op'] == t('Delete role')) {
-    variable_del('shorcut_per_role_' . $form_state['values']['name'] . '_set');
+   // $role_name = str_replace(' ', '_', $form_state['values']['name']);
+    variable_del('shorcut_per_role_' . $role_name . '_set');
   }
 }
