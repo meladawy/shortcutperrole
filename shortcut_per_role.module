@@ -23,9 +23,11 @@ function shortcut_per_role_menu() {
   $items['admin/config/user-interface/shortcut-per-role'] = array(
     'title' => 'Shortcuts Per Role',
     'description' => 'Add and modify shortcut sets per role',
-    'page callback' => 'shortcut_per_role_admin',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('shortcut_per_role_admin_form'),
     'access arguments' => array('administer shortcut per role'),
     'file' => 'shortcut_per_role.admin.inc',
+    
   );
   
   return $items;
@@ -36,6 +38,7 @@ function shortcut_per_role_menu() {
 function shortcut_per_role_default_set($account){
 //determine the  role of user according to the rank & assign the shortcut set...
 $role_highest=db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($user->roles)) . ') ORDER BY weight DESC ') ->fetchField();
+ $role_highest = str_replace(' ', '_',$role_highest);
  return variable_get('shorcut_per_role_' . $role_highest . '_set', $default='shortcut-set-1');
  }
 
@@ -44,10 +47,10 @@ $role_highest=db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', ar
  *
  * Handles Shortcut per  role association delete when role is deleted from system.
  *
- * @see shortcut_per_role_user_admin_role_submit_alter()
+ * @see shortcut_per_role_form_user_admin_role_submit_alter()
  */
 function shortcut_per_role_form_user_admin_role_alter(&$form, $form_state) {
-  $form['#submit'][] = 'toolbar_user_admin_role_submit_alter';
+  $form['#submit'][] = 'shortcut_per_role_submit_alter';
 }
 
 /**
