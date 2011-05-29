@@ -11,7 +11,7 @@
 function shortcut_per_role_permission() {
   return array(
     'administer shortcut per role' => array(
-      'title' => t('Administer shortcuts per role'),
+      'title' => t('Administer Shortcuts per Role'),
     ),
   );
 }
@@ -22,8 +22,9 @@ function shortcut_per_role_permission() {
 function shortcut_per_role_help($path, $arg) {
   switch ($path) {
     case 'admin/help#shortcut_per_role':
-      //return l(t('Settings'), 'admin/config/user-interface/shortcut-per-role');
-      break;
+  $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Assign the default shortcut set per role') .  '</p>';
+      return $output;
   }
 }
 
@@ -42,37 +43,17 @@ function shortcut_per_role_menu() {
 
   return $items;
 }
+
 /**
  * Implements hook_shortcut_default_set()
  */
 function shortcut_per_role_default_set($account) {
   //determine the  role of user according to the rank & assign the shortcut set...
-  $role_highest_name = db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($user->roles)) . ') ORDER BY weight DESC ')->fetchField();
+  $role_highest_name = db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($account->roles)) . ') ORDER BY weight DESC ')->fetchField();
   $role_highest_name = str_replace(' ', '_', $role_highest);
-  return variable_get('shorcut_per_role_' . $role_highest_name . '_set', $default = 'shortcut-set-1');
+  return variable_get('shorcut_per_role_' . $role_highest_name . '_set', 'shortcut-set-1');
 }
 
-/**
- * Implements hook_form_FORM_ID_alter().
- *
- * Handles Shortcut per  role association delete when role is deleted from system.
- *
- * @see shortcut_per_role_form_user_admin_role_submit_alter()
- */
-function shortcut_per_role_form_user_admin_role_alter(&$form, &$form_state, $form_id) {
-  $form['#submit'][] = 'shortcut_per_role_submit_alter';
-}
+// @TODO: Update the variable name when role name is updated
+// @TODO: Delete the variable when a role is deleted
 
-/**
- * Role delete callback.
- *
- * Handles shortcut_per_role role association delete when role is deleted from system
- *
- * @see shortcut_per_role_form_user_admin_role_alter()
- */
-function shortcut_per_role_user_admin_role_submit_alter($form, &$form_state) {
-  if ($form_state['values']['op'] == t('Delete role')) {
-   // $role_name = str_replace(' ', '_', $form_state['values']['name']);
-    variable_del('shorcut_per_role_' . $role_name . '_set');
-  }
-}

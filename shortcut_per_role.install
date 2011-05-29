@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Implements hook_install()
+ * @file
+ * Install, update, and uninstall Shortcut per Role.
  */
-function shortcut_per_role_install() { }
+
 /**
  * Implements hook_uninstall()
  */
