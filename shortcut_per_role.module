@@ -23,7 +23,7 @@ function shortcut_per_role_help($path, $arg) {
   switch ($path) {
     case 'admin/help#shortcut_per_role':
       $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Assign the default shortcut set per role') .  '</p>';
+      $output .= '<p>' . t('Assign the default shortcut set per role') . '</p>';
       return $output;
   }
 }
