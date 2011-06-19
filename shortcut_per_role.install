@@ -9,9 +9,5 @@
  * Implements hook_uninstall()
  */
 function shortcut_per_role_uninstall() {
-  $role_names = db_query("SELECT rid FROM {role}")->fetchCol();
-  foreach ($role_names as $role_name) {
-    $role_name = str_replace(' ', '_', $role_name);
-    variable_del('shorcut_per_role_' . $role_name . '_set');
-  }
-}
+ variable_del('shortcut_per_role');
+ } 

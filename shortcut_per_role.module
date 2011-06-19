@@ -22,7 +22,7 @@ function shortcut_per_role_permission() {
 function shortcut_per_role_help($path, $arg) {
   switch ($path) {
     case 'admin/help#shortcut_per_role':
-  $output = '<h3>' . t('About') . '</h3>';
+      $output = '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Assign the default shortcut set per role') .  '</p>';
       return $output;
   }
@@ -40,20 +40,28 @@ function shortcut_per_role_menu() {
     'access arguments' => array('administer shortcut per role'),
     'file' => 'shortcut_per_role.admin.inc',
   );
-
   return $items;
 }
 
 /**
  * Implements hook_shortcut_default_set()
  */
-function shortcut_per_role_default_set($account) {
-  //determine the  role of user according to the rank & assign the shortcut set...
-  $role_highest_name = db_query('SELECT name FROM {role} WHERE rid IN(' . implode(',', array_keys($account->roles)) . ') ORDER BY weight DESC ')->fetchField();
-  $role_highest_name = str_replace(' ', '_', $role_highest);
-  return variable_get('shorcut_per_role_' . $role_highest_name . '_set', 'shortcut-set-1');
+function shortcut_per_role_shortcut_default_set($account) {
+  //determine the highest rid of user & assign the shortcut set...
+  $h_rid = db_query('SELECT rid FROM {role} WHERE rid IN(' . implode(',', array_keys($account->roles)) . ') ORDER BY weight DESC LIMIT 1 ')->fetchField();
+  $shortcut_per_role = variable_get('shortcut_per_role', array());
+  $ss = $shortcut_per_role[$h_rid];
+  return $ss;
 }
 
-// @TODO: Update the variable name when role name is updated
-// @TODO: Delete the variable when a role is deleted
-
+/**
+ * Implements hook_user_role_delete()
+ */
+ function shortcut_per_role_user_role_delete($role){
+   $rid = $role->rid;
+   $ss_per_role=variable_get('shortcut_per_role',array());
+   if(array_key_exists($rid,$ss_per_role)){ 
+   unset($ss_per_role[$rid]);
+   }
+   variable_set('shortcut_per_role',$ss_per_role);
+}
