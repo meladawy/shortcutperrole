@@ -57,11 +57,11 @@ function shortcut_per_role_shortcut_default_set($account) {
 /**
  * Implements hook_user_role_delete()
  */
- function shortcut_per_role_user_role_delete($role){
+ function shortcut_per_role_user_role_delete($role) {
    $rid = $role->rid;
-   $ss_per_role=variable_get('shortcut_per_role',array());
-   if(array_key_exists($rid,$ss_per_role)){ 
+   $ss_per_role=variable_get('shortcut_per_role', array());
+   if (array_key_exists($rid, $ss_per_role)) { 
    unset($ss_per_role[$rid]);
    }
-   variable_set('shortcut_per_role',$ss_per_role);
+   variable_set('shortcut_per_role', $ss_per_role);
 }
