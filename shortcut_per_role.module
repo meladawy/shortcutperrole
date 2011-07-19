@@ -49,7 +49,7 @@ function shortcut_per_role_menu() {
 function shortcut_per_role_shortcut_default_set($account) {
   //determine the highest rid of user & assign the shortcut set...
   $query = db_select('role', 'r')
-    ->condition('rid', implode(',', array_keys($account->roles)))
+    ->condition('rid', array_keys($account->roles), 'IN')
     ->fields('r', array('rid'))
     ->orderBy('weight', 'DESC');
   $h_rid = $query->execute()->fetchField();
