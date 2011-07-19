@@ -9,5 +9,5 @@
  * Implements hook_uninstall()
  */
 function shortcut_per_role_uninstall() {
- variable_del('shortcut_per_role');
- } 
+  variable_del('shortcut_per_role');
+} 

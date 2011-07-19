@@ -48,25 +48,25 @@ function shortcut_per_role_menu() {
  */
 function shortcut_per_role_shortcut_default_set($account) {
   //determine the highest rid of user & assign the shortcut set...
-  $query = db_select('role','r');
-  $query
-  ->condition('rid', implode(',', array_keys($account->roles)))
-  ->fields('r', array('title'))
-  ->orderBy('weight', 'DESC');
+  $query = db_select('role', 'r')
+    ->condition('rid', implode(',', array_keys($account->roles)))
+    ->fields('r', array('rid'))
+    ->orderBy('weight', 'DESC');
   $h_rid = $query->execute()->fetchField();
-  $shortcut_per_role = variable_get('shortcut_per_role', array());
-  $ss = $shortcut_per_role[$h_rid];
+  $ss_per_role = variable_get('shortcut_per_role', array());
+  $ss = array_key_exists($h_rid, $ss_per_role) ? $ss_per_role[$h_rid] : 
+  'shortcut_set_1'; 
   return $ss;
 }
 
 /**
  * Implements hook_user_role_delete()
  */
- function shortcut_per_role_user_role_delete($role) {
-   $rid = $role->rid;
-   $ss_per_role=variable_get('shortcut_per_role', array());
-   if (array_key_exists($rid, $ss_per_role)) { 
-     unset($ss_per_role[$rid]);
-   }
-   variable_set('shortcut_per_role', $ss_per_role);
+function shortcut_per_role_user_role_delete($role) {
+  $rid = $role->rid;
+  $ss_per_role=variable_get('shortcut_per_role', array());
+  if (array_key_exists($rid, $ss_per_role)) { 
+    unset($ss_per_role[$rid]);
+  }
+  variable_set('shortcut_per_role', $ss_per_role);
 }
