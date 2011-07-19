@@ -12,7 +12,7 @@ function shortcut_per_role_permission() {
   return array(
     'administer shortcut per role' => array(
       'title' => t('Administer Shortcuts per Role'),
-    ),
+     ),
   );
 }
 
@@ -48,7 +48,12 @@ function shortcut_per_role_menu() {
  */
 function shortcut_per_role_shortcut_default_set($account) {
   //determine the highest rid of user & assign the shortcut set...
-  $h_rid = db_query('SELECT rid FROM {role} WHERE rid IN(' . implode(',', array_keys($account->roles)) . ') ORDER BY weight DESC LIMIT 1 ')->fetchField();
+  $query = db_select('role','r');
+  $query
+  ->condition('rid', implode(',', array_keys($account->roles)))
+  ->fields('r', array('title'))
+  ->orderBy('weight', 'DESC');
+  $h_rid = $query->execute()->fetchField();
   $shortcut_per_role = variable_get('shortcut_per_role', array());
   $ss = $shortcut_per_role[$h_rid];
   return $ss;
@@ -61,7 +66,7 @@ function shortcut_per_role_shortcut_default_set($account) {
    $rid = $role->rid;
    $ss_per_role=variable_get('shortcut_per_role', array());
    if (array_key_exists($rid, $ss_per_role)) { 
-   unset($ss_per_role[$rid]);
+     unset($ss_per_role[$rid]);
    }
    variable_set('shortcut_per_role', $ss_per_role);
 }

@@ -1,9 +1,9 @@
 -- SUMMARY --
 
-Shortcut per Role provide a simple utility for assigning a shorcuts set per role
+Shortcut per Role provide a simple utility for assigning a shortcuts set per role
 
 
--- REQUIRMENTS --
+-- REQUIREMENTS --
 
 Core Shortcut module should be enabled
 
@@ -13,12 +13,12 @@ Core Shortcut module should be enabled
 * Install as usual, see http://drupal.org/node/70151 for further information.
 
 
--- CONFIGRATION --
+-- CONFIGURATION –
 
-* Goto admin/config/user-interface/shortcut-per-role and assign the shorcut set for roles
+* Go to admin/config/user-interface/shortcut-per-role and assign the shortcut set for roles
+
 
 -- CONTACT --
 
 Current maintainer: 
 * Ankit Babbar - http://drupal.org/user/533078
-
