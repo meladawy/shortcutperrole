@@ -2,5 +2,3 @@ name = Shortcut per Role
 description = Allows creating default shortcut per role
 core = 7.x
 dependencies[] = shortcut
-files[] = shortcut_per_role.module
-files[] = shortcut_per_role.install
