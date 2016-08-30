@@ -5,81 +5,50 @@
  * Allows users to manage customizable lists of shortcut links.
  */
 
-/**
- * Implements hook_permission().
- */
-function shortcutperrole_permission() {
-  return array(
-    'administer shortcut per role' => array(
-      'title' => t('Administer Shortcuts per Role'),
-     ),
-  );
-}
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
- * Implement hook_help().
+ * Default shortcut set for users.
  */
-function shortcutperrole_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#shortcutperrole':
-      $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Assign the default shortcut set per role') . '</p>';
+define('SHORTCUT_PER_ROLE_DEFAULT_SET', 'default');
+
+/**
+ * Implements hook_help().
+ */
+function shortcutperrole_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the shortcutperrole module.
+    case 'help.page.shortcutperrole':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Allows creating default shortcut per role') . '</p>';
       return $output;
+
+    default:
   }
 }
 
-/**
- * Implements hook_menu().
- */
-function shortcutperrole_menu() {
-  $items['admin/config/user-interface/shortcut/roles'] = array(
-    'title' => 'Shortcuts Per Role',
-    'description' => 'Add and modify shortcut sets per role',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('shortcutperrole_admin_form'),
-    'access arguments' => array('administer shortcut per role'),
-    'file' => 'shortcutperrole.admin.inc',
-    'type' => MENU_LOCAL_TASK,
-  );
-  return $items;
-}
-/**
- * Implements hook_menu_alter().
- */
-function shortcutperrole_menu_alter(&$items) {
-  // Enforce a default local task.
-  if (module_exists('shortcut') && !array_key_exists('admin/config/user-interface/shortcut/list', $items)) {
-    $items['admin/config/user-interface/shortcut/list'] = array(
-      'title' => 'List',
-      'weight' => 0,
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-    );
-  }
- }
 /**
  * Implements hook_shortcut_default_set()
  */
 function shortcutperrole_shortcut_default_set($account) {
-  //determine the highest rid of user & assign the shortcut set...
-  $query = db_select('role', 'r')
-    ->condition('rid', array_keys($account->roles), 'IN')
-    ->fields('r', array('rid'))
-    ->orderBy('weight', 'DESC');
-  $h_rid = $query->execute()->fetchField();
-  $ss_per_role = variable_get('shortcutperrole', array());
-  $ss = array_key_exists($h_rid, $ss_per_role) ? $ss_per_role[$h_rid] :
-  'shortcut-set-1';
+  //determine the highest rid of user & assign the shortcut set.
+  $all_roles = user_roles();
+  $user_roles = array_flip($account->getRoles());
+  $sorted_roles = array_intersect_key($all_roles, $user_roles);
+  if ($sorted_roles) {
+    $role = end($sorted_roles);
+    $config = \Drupal::config('shortcutperrole.settings');
+    $set = $config->get('role.' . $role->id());
+  }
+  $ss = isset($set) ? $set : SHORTCUT_PER_ROLE_DEFAULT_SET;
   return $ss;
 }
 
 /**
- * Implements hook_user_role_delete()
+ * Implements hook_ENTITY_TYPE_delete() for user_role entities.
  */
 function shortcutperrole_user_role_delete($role) {
-  $rid = $role->rid;
-  $ss_per_role = variable_get('shortcutperrole', array());
-  if (array_key_exists($rid, $ss_per_role)) {
-    unset($ss_per_role[$rid]);
-  }
-  variable_set('shortcutperrole', $ss_per_role);
+  $config = 'shortcutperrole.settings.role.' . $role->id();
+  \Drupal::service('config.factory')->getEditable($config)->delete();
 }
