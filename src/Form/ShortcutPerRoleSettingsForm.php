@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\shortcutperrole\Form\ShortcutPerRoleSettingsForm.
- */
-
 namespace Drupal\shortcutperrole\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
