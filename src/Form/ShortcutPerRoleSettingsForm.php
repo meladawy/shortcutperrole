@@ -5,8 +5,6 @@ namespace Drupal\shortcutperrole\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\shortcut\Entity\ShortcutSet;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
 
 /**
  * Configure Shortcut per Role settings for this site.
